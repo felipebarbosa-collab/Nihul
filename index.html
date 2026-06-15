@@ -174,8 +174,121 @@ textarea.fc{resize:vertical;min-height:76px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 </style>
+
+<style id="login-styles">
+#login-gate {
+  position:fixed;inset:0;background:#0f172a;z-index:99999;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;
+}
+#login-gate.hidden{display:none;}
+.login-box{
+  background:#1a2236;border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;padding:40px 36px;width:400px;max-width:95vw;
+  box-shadow:0 24px 80px rgba(0,0,0,0.5);
+}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(59,130,246,0.4);}
+.login-title{font-size:20px;font-weight:700;color:#fff;text-align:center;margin-top:12px;letter-spacing:-.3px;}
+.login-sub{font-size:12px;color:#64748b;text-align:center;margin-top:4px;}
+.login-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;margin-top:24px;}
+.login-tab{flex:1;padding:8px;font-size:13px;font-weight:500;color:#64748b;cursor:pointer;text-align:center;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.login-tab.active{color:#60a5fa;border-bottom-color:#3b82f6;}
+.login-form{display:flex;flex-direction:column;gap:14px;}
+.lf-group{display:flex;flex-direction:column;gap:5px;}
+.lf-label{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;}
+.lf-input{background:#0f172a;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#f1f5f9;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+.lf-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.12);}
+.lf-input::placeholder{color:#475569;}
+.lf-btn{background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;margin-top:4px;}
+.lf-btn:hover{background:#2563eb;}
+.lf-error{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;font-size:12px;color:#dc2626;display:none;}
+.lf-success{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:12px;color:#16a34a;display:none;}
+.lf-divider{height:1px;background:rgba(255,255,255,0.06);margin:4px 0;}
+.lf-hint{font-size:11px;color:#475569;text-align:center;}
+.lf-hint span{color:#60a5fa;cursor:pointer;}
+.login-footer{text-align:center;margin-top:20px;font-size:11px;color:#334155;}
+#app-content{display:none;}
+</style>
+
 </head>
 <body>
+
+<div id="login-gate">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="data:image/png;base64,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" onerror="this.style.display='none'">
+      <div class="login-title">CEVV</div>
+      <div class="login-sub">Sistema de Gestão · Acesso Restrito</div>
+    </div>
+
+    <div class="login-tabs">
+      <div class="login-tab active" id="tab-login" onclick="showLoginTab('login')">Entrar</div>
+      <div class="login-tab" id="tab-cadastro" onclick="showLoginTab('cadastro')">Cadastrar</div>
+    </div>
+
+    <!-- FORM LOGIN -->
+    <div id="form-login">
+      <div class="login-form">
+        <div class="lf-group">
+          <label class="lf-label">E-mail</label>
+          <input class="lf-input" id="l-email" type="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()">
+        </div>
+        <div class="lf-group">
+          <label class="lf-label">Senha</label>
+          <input class="lf-input" id="l-senha" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
+        </div>
+        <div class="lf-error" id="l-erro">E-mail ou senha incorretos.</div>
+        <button class="lf-btn" onclick="fazerLogin()">Entrar no Sistema</button>
+        <div class="lf-hint">Não tem conta? <span onclick="showLoginTab('cadastro')">Cadastre-se</span></div>
+      </div>
+    </div>
+
+    <!-- FORM CADASTRO -->
+    <div id="form-cadastro" style="display:none;">
+      <div class="login-form">
+        <div class="lf-group">
+          <label class="lf-label">Nome Completo</label>
+          <input class="lf-input" id="c-nome" type="text" placeholder="Seu nome completo">
+        </div>
+        <div class="lf-group">
+          <label class="lf-label">E-mail</label>
+          <input class="lf-input" id="c-email" type="email" placeholder="seu@email.com">
+        </div>
+        <div class="lf-group">
+          <label class="lf-label">Senha</label>
+          <input class="lf-input" id="c-senha" type="password" placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="lf-group">
+          <label class="lf-label">Confirmar Senha</label>
+          <input class="lf-input" id="c-senha2" type="password" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')fazerCadastro()">
+        </div>
+        <div class="lf-group">
+          <label class="lf-label">Perfil de Acesso</label>
+          <select class="lf-input" id="c-perfil">
+            <option value="operador">Operador</option>
+            <option value="financeiro">Financeiro</option>
+            <option value="eventos">Eventos</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+        <div class="lf-group">
+          <label class="lf-label">Código de Autorização</label>
+          <input class="lf-input" id="c-codigo" type="text" placeholder="Solicite ao administrador">
+        </div>
+        <div class="lf-error" id="c-erro"></div>
+        <div class="lf-success" id="c-ok">Cadastro realizado! Você já pode fazer login.</div>
+        <button class="lf-btn" onclick="fazerCadastro()">Criar Conta</button>
+        <div class="lf-hint">Já tem conta? <span onclick="showLoginTab('login')">Fazer login</span></div>
+      </div>
+    </div>
+
+    <div class="login-footer">🔒 Acesso restrito · CEVV © 2026</div>
+  </div>
+</div>
+
+<div id="app-content">
+
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="logo-icon" style="background:none;padding:0;width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="data:image/png;base64,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" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"></div>
@@ -230,6 +343,7 @@ textarea.fc{resize:vertical;min-height:76px}
     <div class="topbar-time" id="ptime">Atualizado às 14:37</div>
     <button class="tbtn" onclick="refreshTime()">↻ Atualizar</button>
     <button class="tbtn">⚙</button>
+    <button class="tbtn" onclick="fazerLogout()" title="Sair" style="color:var(--red);border-color:#fecaca;">⬤ Sair</button>
     <div style="display:flex;align-items:center;gap:7px;padding:4px 10px;background:var(--bluel);border:1px solid #bfdbfe;border-radius:20px;cursor:pointer;">
       <div style="width:22px;height:22px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">AP</div>
       <span style="font-size:12px;font-weight:500;color:var(--blue)">Pastor</span>
@@ -2168,5 +2282,121 @@ function salvarAnotacao(){
 }
 window.addEventListener('load',()=>{setTimeout(initDash,200);refreshTime();anotNow();setInterval(anotNow,30000);});
 </script>
+
+</div><!-- /app-content -->
+
+<script>
+// ── AUTH SYSTEM ──
+const AUTH_CODE = 'CEVV2026'; // código de autorização para novos cadastros
+
+function getUsers(){
+  try{ return JSON.parse(localStorage.getItem('cevv_users')||'[]'); }
+  catch(e){ return []; }
+}
+function saveUsers(u){ localStorage.setItem('cevv_users',JSON.stringify(u)); }
+function getSession(){ 
+  try{ return JSON.parse(localStorage.getItem('cevv_session')||'null'); }
+  catch(e){ return null; }
+}
+function saveSession(s){ localStorage.setItem('cevv_session',JSON.stringify(s)); }
+
+// Seed admin default
+function seedAdmin(){
+  const users = getUsers();
+  if(!users.find(u=>u.email==='admin@cevv.com')){
+    users.push({nome:'Admin Pastor',email:'admin@cevv.com',senha:'cevv2026',perfil:'admin',avatar:'AP'});
+    saveUsers(users);
+  }
+}
+
+function initAuth(){
+  seedAdmin();
+  const session = getSession();
+  if(session && session.email){
+    // Already logged in
+    mostrarApp(session);
+  } else {
+    document.getElementById('login-gate').classList.remove('hidden');
+  }
+}
+
+function fazerLogin(){
+  const email = document.getElementById('l-email').value.trim().toLowerCase();
+  const senha = document.getElementById('l-senha').value;
+  const erro  = document.getElementById('l-erro');
+  erro.style.display='none';
+  if(!email||!senha){ erro.textContent='Preencha e-mail e senha.'; erro.style.display='block'; return; }
+  const users = getUsers();
+  const user  = users.find(u=>u.email.toLowerCase()===email && u.senha===senha);
+  if(!user){ erro.textContent='E-mail ou senha incorretos.'; erro.style.display='block'; return; }
+  saveSession(user);
+  mostrarApp(user);
+}
+
+function fazerCadastro(){
+  const nome   = document.getElementById('c-nome').value.trim();
+  const email  = document.getElementById('c-email').value.trim().toLowerCase();
+  const senha  = document.getElementById('c-senha').value;
+  const senha2 = document.getElementById('c-senha2').value;
+  const perfil = document.getElementById('c-perfil').value;
+  const codigo = document.getElementById('c-codigo').value.trim().toUpperCase();
+  const erro   = document.getElementById('c-erro');
+  const ok     = document.getElementById('c-ok');
+  erro.style.display='none'; ok.style.display='none';
+
+  if(!nome||!email||!senha||!senha2){ erro.textContent='Preencha todos os campos.'; erro.style.display='block'; return; }
+  if(senha.length<6){ erro.textContent='A senha deve ter no mínimo 6 caracteres.'; erro.style.display='block'; return; }
+  if(senha!==senha2){ erro.textContent='As senhas não coincidem.'; erro.style.display='block'; return; }
+  if(codigo!==AUTH_CODE){ erro.textContent='Código de autorização inválido. Solicite ao administrador.'; erro.style.display='block'; return; }
+
+  const users = getUsers();
+  if(users.find(u=>u.email.toLowerCase()===email)){ erro.textContent='Este e-mail já está cadastrado.'; erro.style.display='block'; return; }
+
+  const initials = nome.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  users.push({nome, email, senha, perfil, avatar:initials});
+  saveUsers(users);
+
+  ok.style.display='block';
+  setTimeout(()=>showLoginTab('login'), 1800);
+}
+
+function mostrarApp(user){
+  document.getElementById('login-gate').classList.add('hidden');
+  document.getElementById('app-content').style.display='block';
+  // Update user name in sidebar
+  const uname = document.querySelector('.user-name, .uname');
+  if(uname) uname.textContent = user.nome;
+  // Update topbar avatar
+  const topAvatar = document.querySelector('.topbar .uavatar-top');
+  if(topAvatar) topAvatar.textContent = user.avatar||user.nome.slice(0,2).toUpperCase();
+  // Update sidebar avatar
+  const sbAvatar = document.querySelector('.uavatar');
+  if(sbAvatar) sbAvatar.textContent = user.avatar||user.nome.slice(0,2).toUpperCase();
+  // Update sidebar name
+  const sbName = document.querySelectorAll('.sidebar-footer div div');
+  if(sbName[0]) sbName[0].textContent = user.nome;
+  if(sbName[1]) sbName[1].textContent = user.perfil.charAt(0).toUpperCase()+user.perfil.slice(1);
+  // Init app
+  setTimeout(()=>{ if(typeof initDash==='function') initDash(); if(typeof refreshTime==='function') refreshTime(); if(typeof anotNow==='function') anotNow(); },200);
+}
+
+function fazerLogout(){
+  localStorage.removeItem('cevv_session');
+  location.reload();
+}
+
+function showLoginTab(tab){
+  document.getElementById('form-login').style.display   = tab==='login'    ? '' : 'none';
+  document.getElementById('form-cadastro').style.display = tab==='cadastro' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',  tab==='login');
+  document.getElementById('tab-cadastro').classList.toggle('active',tab==='cadastro');
+  document.getElementById('l-erro').style.display='none';
+  document.getElementById('c-erro').style.display='none';
+  document.getElementById('c-ok').style.display='none';
+}
+
+window.addEventListener('load', initAuth);
+</script>
+
 </body>
 </html>
